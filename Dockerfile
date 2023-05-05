@@ -31,6 +31,7 @@ RUN apt-get update && \
         ca-certificates \
         cmake \
         command-not-found \
+        curl \
         emacs \
         freeglut3-dev \
         git \
