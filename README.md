@@ -23,7 +23,7 @@ xhost +
 docker run -it --rm --net=host --runtime nvidia -e DISPLAY=$DISPLAY -v /tmp/.X11-unix/:/tmp/.X11-unix l4t-base:35.3.1 bash
 ```
 
-# Reference
+## Reference
 
 - <https://gitlab.com/nvidia/container-images/l4t-base>
 
