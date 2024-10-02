@@ -104,7 +104,7 @@ RUN echo "deb https://repo.download.nvidia.com/jetson/common r35.3 main" >> /etc
 RUN wget -O /etc/jetson-ota-public.key https://gitlab.com/nvidia/container-images/l4t-base/-/raw/master/jetson-ota-public.key && \
     apt-key add /etc/jetson-ota-public.key
 
-# CUDA, cuDNN, TensorRT
+# CUDA, cuDNN
 RUN apt-get update && \
     apt-get install -qq -y --no-install-recommends \
         cuda \
