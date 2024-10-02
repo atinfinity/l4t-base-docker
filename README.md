@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a Dockerfile to make L4T environment(Ubuntu 22.04) on Jetson device.  
+This is a Dockerfile to make L4T environment on Jetson device.  
 This Dockerfile is based on [nvidia/container-images/l4t-base](https://gitlab.com/nvidia/container-images/l4t-base).
 
 ## Requirements
@@ -10,24 +10,13 @@ This Dockerfile is based on [nvidia/container-images/l4t-base](https://gitlab.co
 - Docker
 - nvidia-docker2
 
-## Build docker image
+## Version
 
-```
-docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t l4t-base:35.3.1 .
-```
+|L4T version of package|Base image|Dockerfile|
+|---|---|---|
+|35.3.1|`ubuntu:22.04`|[ubuntu2204/Dockerfile](ubuntu2204/Dockerfile)|
 
-## Launch docker container
-
-```
-xhost +
-docker run -it --rm --net=host --runtime nvidia -e DISPLAY=$DISPLAY -v /tmp/.X11-unix/:/tmp/.X11-unix l4t-base:35.3.1 bash
-```
-
-## Reference
-
-- <https://gitlab.com/nvidia/container-images/l4t-base>
-
-## Appendix
+## Checked applications
 
 I tested on Jetson Orin NX 16GB.
 
@@ -90,3 +79,7 @@ Device 0: "Orin"
 deviceQuery, CUDA Driver = CUDART, CUDA Driver Version = 11.4, CUDA Runtime Version = 11.4, NumDevs = 1
 Result = PASS
 ```
+
+## Reference
+
+- <https://gitlab.com/nvidia/container-images/l4t-base>
