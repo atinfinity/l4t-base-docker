@@ -15,6 +15,7 @@ This Dockerfile is based on [nvidia/container-images/l4t-base](https://gitlab.co
 |L4T version of package|Base image|Dockerfile|
 |---|---|---|
 |35.3.1|`ubuntu:22.04`|[ubuntu2204/Dockerfile](ubuntu2204/Dockerfile)|
+|36.4.0|`ubuntu:24.04`|[ubuntu2404/Dockerfile](ubuntu2404/Dockerfile)|
 
 ## Checked applications
 

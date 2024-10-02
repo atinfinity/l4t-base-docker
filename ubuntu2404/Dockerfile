@@ -1,4 +1,4 @@
-FROM docker.io/arm64v8/ubuntu:22.04
+FROM docker.io/arm64v8/ubuntu:24.04
 
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES all
@@ -9,6 +9,15 @@ ARG GID=1000
 # add new sudo user
 ENV USERNAME jetson
 ENV HOME /home/$USERNAME
+
+# https://askubuntu.com/questions/1513927/ubuntu-24-04-docker-images-now-includes-user-ubuntu-with-uid-gid-1000
+RUN if getent passwd $UID; then \
+      userdel -f $(getent passwd $UID | cut -d: -f1); \
+    fi \
+    && if getent group $GID; then \
+      groupdel $(getent group $GID | cut -d: -f1); \
+    fi
+
 RUN useradd -m $USERNAME && \
         echo "$USERNAME:$USERNAME" | chpasswd && \
         usermod --shell /bin/bash $USERNAME && \
@@ -64,7 +73,6 @@ RUN apt-get update && \
         parted \
         pciutils \
         python3 \
-        python3-distutils \
         python3-numpy \
         python3-pexpect \
         python3-pip \
@@ -99,8 +107,9 @@ RUN mkdir -p /usr/share/egl/egl_external_platform.d/ && echo '\
     }\
 }' > /usr/share/egl/egl_external_platform.d/nvidia_wayland.json
 
-RUN echo "deb https://repo.download.nvidia.com/jetson/common r35.3 main" >> /etc/apt/sources.list.d/nvidia-l4t-apt-source.list && \
-    echo "deb https://repo.download.nvidia.com/jetson/t234 r35.3 main" >> /etc/apt/sources.list.d/nvidia-l4t-apt-source.list
+RUN echo "deb https://repo.download.nvidia.com/jetson/common r36.4 main" >> /etc/apt/sources.list.d/nvidia-l4t-apt-source.list && \
+    echo "deb https://repo.download.nvidia.com/jetson/t234 r36.4 main" >> /etc/apt/sources.list.d/nvidia-l4t-apt-source.list && \
+    echo "deb https://repo.download.nvidia.com/jetson/ffmpeg r36.4 main" >> /etc/apt/sources.list.d/nvidia-l4t-apt-source.list
 RUN wget -O /etc/jetson-ota-public.key https://gitlab.com/nvidia/container-images/l4t-base/-/raw/master/jetson-ota-public.key && \
     apt-key add /etc/jetson-ota-public.key
 
@@ -108,9 +117,9 @@ RUN wget -O /etc/jetson-ota-public.key https://gitlab.com/nvidia/container-image
 RUN apt-get update && \
     apt-get install -qq -y --no-install-recommends \
         cuda \
-        libcudnn8 \
-        libcudnn8-dev \
-        libcudnn8-samples \
+        libcudnn9 \
+        libcudnn9-dev \
+        libcudnn9-samples \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
