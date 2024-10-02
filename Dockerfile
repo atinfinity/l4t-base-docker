@@ -111,18 +111,9 @@ RUN apt-get update && \
         libcudnn8 \
         libcudnn8-dev \
         libcudnn8-samples \
-        tensorrt \
-        tensorrt-libs \
-        tensorrt-dev \
-        libnvinfer8 \
-        libnvinfer-dev \
-        gcc-9 \
-        g++-9 \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-RUN ln -s /usr/bin/gcc-9 /usr/local/cuda/bin/gcc && \
-    ln -s /usr/bin/g++-9 /usr/local/cuda/bin/g++
 
 RUN ldconfig
 
