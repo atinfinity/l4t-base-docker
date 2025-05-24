@@ -7,14 +7,16 @@ This Dockerfile is based on [nvidia/container-images/l4t-base](https://gitlab.co
 
 ## Requirements
 
+- Jetson Linux 36.4 <https://developer.nvidia.com/embedded/jetson-linux-r3640>
+  - JetPack 6.1 <https://developer.nvidia.com/embedded/jetpack-sdk-61>
 - Docker
-- nvidia-docker2
+- NVIDIA Container Toolkit
 
 ## Version
 
 |L4T version of package|Base image|Dockerfile|
 |---|---|---|
-|35.3.1|`ubuntu:22.04`|[ubuntu2204/Dockerfile](ubuntu2204/Dockerfile)|
+|36.4.0|`ubuntu:22.04`|[ubuntu2204/Dockerfile](ubuntu2204/Dockerfile)|
 |36.4.0|`ubuntu:24.04`|[ubuntu2404/Dockerfile](ubuntu2404/Dockerfile)|
 
 ## Checked applications
@@ -31,7 +33,7 @@ I tested on Jetson Orin NX 16GB.
 
 ### deviceQuery
 
-```
+```bash
 $ ./deviceQuery 
 ./deviceQuery Starting...
 
