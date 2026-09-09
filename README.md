@@ -86,6 +86,58 @@ deviceQuery, CUDA Driver = CUDART, CUDA Driver Version = 11.4, CUDA Runtime Vers
 Result = PASS
 ```
 
+## GPU acceleration status
+
+Verified on Jetson Orin NX 16GB / Jetson Linux 39.2.0 (JetPack 7.2) / `l4t-base:39.2.0` (`ubuntu2604`), NVIDIA driver 595.78, X11 display, 2026-09-09. The `ubuntu2204` and `ubuntu2404` images are not verified.
+
+|API|Status|
+|---|---|
+|OpenGL (GLX)|GPU accelerated (GLX 1.4 / direct rendering, OpenGL 4.6.0, `NVIDIA Tegra Orin (nvgpu)/integrated`)|
+|OpenGL ES / EGL|GPU accelerated (EGL 1.5 / OpenGL ES 3.2, EGL vendor NVIDIA)|
+|CUDA|Available (CUDA 13.2, compute capability 8.7, `deviceQuery` Result = PASS)|
+|cuDNN|Available (cuDNN 9.20.0, `mnistCUDNN` Test passed)|
+|Vulkan|GPU accelerated (instance 1.4.341 / device 1.4.329, `NVIDIA Tegra Orin (nvgpu)`, integrated GPU, NVIDIA proprietary driver)|
+|WebGPU (native)|GPU accelerated (Deno / wgpu via Vulkan, adapter `NVIDIA Tegra Orin (nvgpu)`)|
+|WebGPU (in browser)|GPU accelerated with `--enable-features=Vulkan` (adapter `nvidia` / `ampere`). Without it no adapter is returned, and `--enable-unsafe-webgpu` alone falls back to SwiftShader (CPU)|
+|WebGL (in browser)|GPU accelerated, no extra flags (ANGLE over desktop GL, `NVIDIA Tegra Orin (nvgpu)/integrated`)|
+|Hardware video encode / decode|Available (`nvv4l2h264enc` / `nvv4l2h265enc` / `nvv4l2av1enc` / `nvv4l2vp9enc` / `nvv4l2decoder`, NVMM buffers)|
+|EGL headless (surfaceless)|GPU accelerated (`EGL_MESA_platform_surfaceless`, works without `DISPLAY`)|
+
+Unlike WSL2, the GPU is exposed as a native NVIDIA device, so OpenGL and Vulkan run on the NVIDIA drivers directly instead of a D3D12 translation layer.
+
+Not covered by this table: TensorRT and VPI (not installed in this image), Argus camera (requires a physical camera), and Wayland (the test host runs an X11 session).
+
+### How this was verified
+
+Run the container as described in [ubuntu2604/README.md](ubuntu2604/README.md), then:
+
+```bash
+# OpenGL (GLX)
+glxinfo -B && glxgears
+
+# OpenGL ES / EGL, and EGL headless
+eglinfo
+env -u DISPLAY eglinfo
+
+# Vulkan
+vulkaninfo --summary && vkcube --c 100
+
+# CUDA
+git clone --depth 1 https://github.com/NVIDIA/cuda-samples.git
+/usr/local/cuda/bin/nvcc -o deviceQuery cuda-samples/cpp/1_Utilities/deviceQuery/deviceQuery.cpp && ./deviceQuery
+
+# cuDNN
+sudo apt-get update && sudo apt-get install -y libfreeimage-dev
+cp -r /usr/src/cudnn_samples_v9 ~/ && cd ~/cudnn_samples_v9/mnistCUDNN && make && ./mnistCUDNN
+
+# Hardware video encode / decode
+gst-launch-1.0 videotestsrc num-buffers=300 ! video/x-raw,width=1920,height=1080,framerate=30/1 ! \
+  nvvidconv ! 'video/x-raw(memory:NVMM)' ! nvv4l2h264enc ! h264parse ! nvv4l2decoder ! fakesink
+```
+
+WebGPU (native) was checked with [Deno](https://deno.com/) (`deno run --unstable-webgpu`), and the two in-browser rows with a Chromium launched through [Playwright](https://playwright.dev/), reading both `navigator.gpu` / `WEBGL_debug_renderer_info` and the GPU feature status reported by Chromium itself.
+
 ## Reference
 
 - <https://gitlab.com/nvidia/container-images/l4t-base>
+- <https://github.com/atinfinity/wsl2_nvidia_gpu_docker> (the GPU acceleration status table follows the same items)
